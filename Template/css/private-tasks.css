@@ -1,4 +1,4 @@
 .private-task-status{
-    color:gray;
+    color:gray !important;
     display: inline-block;
 }
