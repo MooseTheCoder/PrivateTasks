@@ -17,7 +17,10 @@ class Plugin extends Base
         $this->projectAccessMap->add('TaskSecurityController', array('project', 'checkMeta','enablePrivateTasks','disablePrivateTasks'), Role::PROJECT_MANAGER);
         // Private Tasks Query
         $this->hook->on('formatter:board:query', function (\PicoDb\Table &$query) {
-            $project_id = $_GET['project_id']; // Project ID
+            $project_id = 0;
+            if(isset($_GET['project_id'])){
+                $project_id = $_GET['project_id']; // Project ID
+            }
             if(in_array($project_id, json_decode($this->configModel->get('privateTasks_proj_priv_tasks'),true))){
                 // Private tasks is enabled
                 $userID = session_get('user')['id'];
@@ -33,7 +36,9 @@ class Plugin extends Base
         // Settings Nav Bar
         $this->template->hook->attach('template:project:sidebar', 'privateTasks:project/sidebar');
         // Private Tasks Header Reminder
-        $this->template->hook->attach('template:project-header:view-switcher','privateTasks:project/private-status-header',['security'=>in_array($_GET['project_id'], json_decode($this->configModel->get('privateTasks_proj_priv_tasks'),true))]);
+        if(isset($_GET['project_id'])){
+            $this->template->hook->attach('template:project-header:view-switcher','privateTasks:project/private-status-header',['security'=>in_array($_GET['project_id'], json_decode($this->configModel->get('privateTasks_proj_priv_tasks'),true))]);
+        }
     }
 
     public function onStartup()
